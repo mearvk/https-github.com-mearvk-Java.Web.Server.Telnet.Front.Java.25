@@ -2,7 +2,7 @@ package telnet;
 
 import commons.CommonRails;
 import server.WebExpress;
-import sim.stochastic;
+//import sim.stochastic;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -130,11 +130,11 @@ public class TelnetCommunicationProxy
         }
     }
 
-    protected stochastic _process_builder;
+    //protected stochastic _process_builder;
 
-    protected stochastic _process;
+    //protected stochastic _process;
 
-    protected stochastic _writer;
+    //protected stochastic _writer;
 
-    protected stochastic _reader;
+    //protected stochastic _reader;
 }
