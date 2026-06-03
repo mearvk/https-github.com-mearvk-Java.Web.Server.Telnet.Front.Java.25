@@ -1,7 +1,7 @@
 import commons.CommonRails;
+import commons.InternationalCommonRails;
+import commons.IranianWedding;
 import server.nitro.NitroWebExpress;
-
-import java.util.Objects;
 
 /**
  * @author Max Rupplin
@@ -32,10 +32,6 @@ public class Main
 
     protected static final String BITCOIN_WEBEXPRESS_HOST = "localhost";
 
-    protected static final Boolean WEBEXPRESS_TELNET_PROXY_ENABLED = Boolean.TRUE;
-
-    protected static final Boolean COMPONENT_TELNET_PROXY_ENABLED = Boolean.TRUE;
-
     public Main()
     {
         System.out.println("-");
@@ -48,7 +44,9 @@ public class Main
 
             System.out.println(". Operating within and United to National Authority of US United States and State of California in Coalition of and for North Carolina her betterment .");
 
-            System.out.println(". ND51 North Carolina Labors & Standards A5501 ANationals Standards of Cary, NC 2807 .");
+            System.out.println(". ND51 North Carolina Labors & Standards A5501 ANationals Standards of Cary, NC 2807 .\n");
+
+            InternationalCommonRails.IranianWedding.printSystemComponent(this);
 
         System.out.println("-");
 
@@ -56,34 +54,25 @@ public class Main
 
             CommonRails.printSystemComponent(this, this.hashCode(),". National NitroExpress™ Web Engine Starting .");
 
-        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME, Main.WEBEXPRESS_TELNET_PROXY_ENABLED);
+        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME);
 
-            configureBridge(nitro);
+            nitro.PORT = 49152;
 
-        startNitroWebExpress(nitro);
-    }
+            nitro.HOST = "localhost";
 
-    private static void configureBridge(final NitroWebExpress nitro)
-    {
-        Objects.requireNonNull(nitro, "nitro");
-        Objects.requireNonNull(nitro.bridge, "nitro.bridge");
+            nitro.THREAD_NAME = "United States D500 WebExpress";
 
-        nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
+            nitro.TELNET_PROXY_ENABLED = Boolean.TRUE;
 
-        nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
-    }
+            nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
 
-    private static void startNitroWebExpress(final NitroWebExpress nitro)
-    {
-        Objects.requireNonNull(nitro, "nitro");
+            nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
 
-        if(nitro.SERVER_SOCKET==null) throw new IllegalStateException("NitroWebExpress server socket was not initialized.");
-
-        nitro.start();
+        NitroWebExpress.SELF.start();
     }
 
     public static void main(String...args)
     {
-        new Main();
+        Main main = new Main();
     }
 }

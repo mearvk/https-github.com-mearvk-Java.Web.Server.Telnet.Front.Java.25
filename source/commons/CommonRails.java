@@ -1,10 +1,3 @@
-/**
- * File-level Javadoc.
- *
- * @author Max Rupplin
- * @date June 03 2026 EST
- */
-
 package commons;
 
 import server.nitro.WebExpress;
@@ -13,10 +6,43 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Collections;
 
 public class CommonRails
 {
     protected String hash = "0xDA717018470E213F";
+
+    /**
+     * If true, CommonRails will emit ANSI-coloured animated output in delayableFinePrinter.
+     * Can be overridden with system property `commonrails.color` or env var `COMMONRAILS_COLOR`.
+     */
+    public static boolean USE_COLORED_OUTPUT = true;
+    static
+    {
+        try
+        {
+            String prop = System.getProperty("commonrails.color");
+
+            if(prop!=null)
+            {
+                USE_COLORED_OUTPUT = Boolean.parseBoolean(prop);
+            }
+            else
+            {
+                String env = System.getenv("COMMONRAILS_COLOR");
+
+                if(env!=null)
+                {
+                    USE_COLORED_OUTPUT = Boolean.parseBoolean(env);
+                }
+            }
+        }
+        catch (Throwable t)
+        {
+            // best-effort; keep default
+        }
+    }
 
     public CommonRails()
     {
@@ -28,7 +54,7 @@ public class CommonRails
         return list.size();
     }
 
-    public static void printSystemComponent(final Object object,  final Integer hashcode, String line)
+    public static void printSystemComponent(Object object, Integer hashcode, String line)
     {
         String classname = "[Current: "+object.getClass().getSimpleName()+"]";
 
@@ -47,8 +73,26 @@ public class CommonRails
         //System.out.println("\u001B[0m");
     }
 
-    public static void delayableFinePrinter(final String text, int delay)
+    public static void delayableFinePrinter(String text, int delay)
     {
+        // When colored output is disabled, just print a single plain line and ensure ANSI reset.
+        if (!USE_COLORED_OUTPUT)
+        {
+            try
+            {
+                System.out.println(text);
+
+                // ensure terminal color state is reset
+                System.out.print("\u001B[0m");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace(System.err);
+            }
+
+            return;
+        }
+
         int[] codes = {232, 233, 234, 235, 236, 237, 238, 241, 244, 247, 250, 253, 188};
 
         try
@@ -63,6 +107,9 @@ public class CommonRails
             Thread.sleep(400L);
 
             System.out.println(text);
+
+            // reset terminal color state after animation
+            System.out.print("\u001B[0m");
         }
         catch (Exception e)
         {
@@ -70,7 +117,7 @@ public class CommonRails
         }
     }
 
-    protected static void _long(final String orgasm,  final WebExpress web_express, Integer not_less_than)
+    protected static void _long(final String orgasm, WebExpress web_express, Integer not_less_than)
     {
         try
         {
@@ -83,7 +130,7 @@ public class CommonRails
 
         switch (orgasm)
         {
-            case "TelnetCommunicator::Close::Hook":
+            case "TelnetCommunicator Close Hook":
 
                 try
                 {
@@ -131,6 +178,70 @@ public class CommonRails
         }
     }
 
+    // Registry for started Processes so CommonRails can monitor them and print on exit
+    protected static final List<Process> REGISTERED_PROCESSES = Collections.synchronizedList(new ArrayList<Process>());
+
+    /**
+     * Register a started Process with CommonRails. CommonRails will attach a listener
+     * to the process' onExit CompletableFuture (Java 9+) and print when the process exits.
+     * If onExit is unavailable/throws, a watcher thread using waitFor is started as a fallback.
+     */
+    public static synchronized void registerProcess(ProcessBuilder pb, Process process, Object owner)
+    {
+        if (process == null) return;
+
+        REGISTERED_PROCESSES.add(process);
+
+        Object printer = (owner == null) ? CommonRails.class : owner;
+
+        try
+        {
+            CommonRails.printSystemComponent(printer, process.hashCode(), ". CommonRails registerProcess >> registered process: " + process);
+
+            // Attach onExit listener
+            process.onExit().thenAccept(p -> {
+                try
+                {
+                    CommonRails.printSystemComponent(printer, p.hashCode(), ". CommonRails processExited >> process closed: " + p + " exit=" + p.exitValue());
+                }
+                catch (Throwable t)
+                {
+                    // Best-effort printing
+                    CommonRails.printSystemComponent(printer, p.hashCode(), ". CommonRails processExited >> process closed: " + p);
+                }
+                finally
+                {
+                    REGISTERED_PROCESSES.remove(p);
+                }
+            });
+        }
+        catch (Throwable t)
+        {
+            // Fallback: spawn a watcher thread that waits for the process
+            new Thread(() -> {
+                try
+                {
+                    int rv = process.waitFor();
+
+                    CommonRails.printSystemComponent(printer, process.hashCode(), ". CommonRails processExited(watcher) >> process closed: " + process + " exit=" + rv);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace(System.err);
+                }
+                finally
+                {
+                    REGISTERED_PROCESSES.remove(process);
+                }
+            }, "CommonRails-ProcessWatcher-" + process.hashCode()).start();
+        }
+    }
+
+    public static synchronized List<Process> getRegisteredProcesses()
+    {
+        return new ArrayList<>(REGISTERED_PROCESSES);
+    }
+
     public static class TelnetCallOnComplete implements Runnable
     {
         protected WebExpress web_express;
@@ -146,6 +257,48 @@ public class CommonRails
             try
             {
                 int return_value = this.web_express.TELNET_COMMUNICATION_PROXY.process.waitFor();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace(System.err);
+            }
+        }
+    }
+
+    /**
+     * Support class for a themed startup decorator — IranianWedding presentation.
+     * Provides a burgundy-colored single-line print used during program init.
+     */
+    public static class IranianWedding
+    {
+        private static final String BURGUNDY_ANSI = "\033[38;5;88m";
+        private static final String RESET_ANSI = "\u001B[0m";
+
+        /**
+         * Print a single-line burgundy presentation. Respects USE_COLORED_OUTPUT flag;
+         * when disabled, prints plain text without ANSI codes.
+         */
+        public static void printInternationalGregorianRhetoric(Object owner, String text)
+        {
+            if (text == null) return;
+
+            String output = text;
+
+            try
+            {
+                if (USE_COLORED_OUTPUT)
+                {
+                    System.out.print(BURGUNDY_ANSI);
+                    System.out.print(output);
+                    System.out.print(RESET_ANSI);
+                    System.out.print("\n");
+                }
+                else
+                {
+                    System.out.println(output);
+                }
+
+                //CommonRails.printSystemComponent(owner == null ? CommonRails.class : owner, (owner==null?CommonRails.class.hashCode():owner.hashCode()), ". IranianWedding presentation printed .");
             }
             catch (Exception e)
             {
