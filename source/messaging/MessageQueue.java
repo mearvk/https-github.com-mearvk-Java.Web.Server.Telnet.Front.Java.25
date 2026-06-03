@@ -1,15 +1,7 @@
-/**
- * File-level Javadoc.
- *
- * @author Max Rupplin
- * @date June 03 2026 EST
- */
-
 package messaging;
 
 import commons.CommonRails;
 import connections.Connection;
-import exceptions.ExceptionHandler;
 import server.base.BaseServer;
 
 import java.io.BufferedWriter;
@@ -25,11 +17,11 @@ public class MessageQueue
 
     public ArrayList<Message> MESSAGES;
 
-    protected BaseServer BASE_SERVER;
+    protected BaseServer base_server;
 
-    public MessageQueue(final BaseServer BASE_SERVER)
+    public MessageQueue(BaseServer base_server)
     {
-        this.BASE_SERVER = BASE_SERVER;
+        this.base_server = base_server;
 
         this.MESSAGES = new ArrayList<>(5000);
     }
@@ -41,48 +33,45 @@ public class MessageQueue
         this.MESSAGES = new ArrayList<>(5000);
     }
 
-    public synchronized void send(final Message MESSAGE)
+    public synchronized void send(Message message)
     {
         BufferedWriter writer;
 
-        if (MESSAGE == null || MESSAGE.SOCKET == null || MESSAGE.MESSAGE_BUFFER == null)
+        if (message == null || message.socket == null || message.MESSAGE_BUFFER == null)
         {
-            CommonRails.printSystemComponent(this, this.hashCode(), "MessageQueue::TelnetQuickSend >> null MESSAGE, socket, or buffer; skipping send.");
+            CommonRails.printSystemComponent(this, this.hashCode(), "MessageQueue::TelnetQuickSend >> null message, socket, or buffer; skipping send.");
 
             return;
         }
 
         try
         {
-            writer = new BufferedWriter(new OutputStreamWriter(MESSAGE.SOCKET.getOutputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(message.socket.getOutputStream()));
 
-            writer.write(MESSAGE.MESSAGE_BUFFER.toString(), 0, MESSAGE.MESSAGE_BUFFER.length());
+            writer.write(message.MESSAGE_BUFFER.toString(), 0, message.MESSAGE_BUFFER.length());
 
             writer.flush();
 
-            MESSAGE.MESSAGE_BUFFER = new StringBuffer();
+            message.MESSAGE_BUFFER = new StringBuffer();
 
-            CommonRails.printSystemComponent(this, this.hashCode(), "MessageQueue TelnetQuickSend >> writing initial handshake to Telnet Remote System ["+MESSAGE.SOCKET +"].");
+            CommonRails.printSystemComponent(this, this.hashCode(), "MessageQueue::TelnetQuickSend >> writing initial handshake to Telnet Remote System ["+message.socket+"].");
         }
         catch (Exception e)
         {
-            ExceptionHandler.dispatch(e);
-            CommonRails.printSystemComponent(this, this.hashCode(), "MessageQueue TelnetQuickSend >> attempted writing initial handshake to Telnet Remote System ["+MESSAGE.SOCKET +"].");
+            CommonRails.printSystemComponent(this, this.hashCode(), "MessageQueue::TelnetQuickSend >> attempted writing initial handshake to Telnet Remote System ["+message.socket+"].");
         }
     }
 
-    public synchronized void add(final Message MESSAGE)
+    public synchronized void add(Message message)
     {
-        CommonRails.printSystemComponent(this, this.hashCode(),
-            "MESSAGEQUEUE add >> receives [" + MESSAGE.MESSAGE_BUFFER.toString().trim() + "].");
+        CommonRails.printSystemComponent(this, this.hashCode(),"MessageQueue::add >> receives ["+message.MESSAGE_BUFFER.toString()+"].");
 
-        this.MESSAGES.add(MESSAGE);
-        this.notifyAll();
+        this.MESSAGES.add(message);
     }
 
-    public synchronized void remove(final Message MESSAGE)
+    public synchronized void remove(Message message)
     {
-        this.MESSAGES.remove(MESSAGE);
+        this.MESSAGES.remove(message);
     }
 
     public synchronized Integer size()
@@ -92,14 +81,14 @@ public class MessageQueue
 
     public static class Message
     {
-        public Connection CONNECTION;
+        public Connection connection;
 
-        public Socket SOCKET;
+        public Socket socket;
 
-        public Date TIME_STAMP;
+        public Date time_stamp;
 
         public StringBuffer MESSAGE_BUFFER = new StringBuffer();
 
-        public InetAddress INTERNET_ADDRESS;
+        public InetAddress internet_address;
     }
 }
