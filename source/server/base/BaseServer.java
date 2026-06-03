@@ -54,24 +54,18 @@ public abstract class BaseServer extends Thread
         }
         catch(Exception e)
         {
-            e.printStackTrace(System.err);
-
-            return;
+            throw new IllegalStateException("Unable to resolve server host "+host, e);
         }
 
         try
         {
             this.SERVER_SOCKET = new ServerSocket(this.PORT, 4096, this.ADDRESS);
+
+            CommonRails.printSystemComponent(this, this.hashCode(),". BaseServer::ServerSocket created on Port "+this.PORT +" .");
         }
         catch(Exception e)
         {
-            e.printStackTrace(System.err);
-
-            return;
-        }
-        finally
-        {
-            CommonRails.printSystemComponent(this, this.hashCode(),". BaseServer::ServerSocket created on Port "+this.PORT +" .");
+            throw new IllegalStateException("Unable to create server socket on "+host+":"+this.PORT, e);
         }
     }
 
@@ -89,24 +83,18 @@ public abstract class BaseServer extends Thread
         }
         catch(Exception e)
         {
-            e.printStackTrace(System.err);
-
-            return;
+            throw new IllegalStateException("Unable to resolve server host "+HOST, e);
         }
 
         try
         {
             this.SERVER_SOCKET = new ServerSocket(this.PORT, 4096, this.ADDRESS);
+
+            CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress::BaseServer] [Server created on Port ["+this.PORT +"]]");
         }
         catch(Exception e)
         {
-            e.printStackTrace(System.err);
-
-            return;
-        }
-        finally
-        {
-            CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress::BaseServer] [Server created on Port ["+this.PORT +"]]");
+            throw new IllegalStateException("Unable to create server socket on "+HOST+":"+this.PORT, e);
         }
     }
 

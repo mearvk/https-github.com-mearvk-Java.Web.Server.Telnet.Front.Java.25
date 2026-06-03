@@ -43,7 +43,7 @@ public class TelnetInstaller
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.err);
+            throw new IllegalStateException("Unable to start telnet proxy command "+this.process_builder.command(), e);
         }
     }
 }

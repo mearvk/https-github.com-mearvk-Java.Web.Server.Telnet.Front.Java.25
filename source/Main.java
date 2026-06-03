@@ -1,6 +1,8 @@
 import commons.CommonRails;
 import server.nitro.NitroWebExpress;
 
+import java.util.Objects;
+
 /**
  * @author Max Rupplin
  *
@@ -30,6 +32,10 @@ public class Main
 
     protected static final String BITCOIN_WEBEXPRESS_HOST = "localhost";
 
+    protected static final Boolean WEBEXPRESS_TELNET_PROXY_ENABLED = Boolean.TRUE;
+
+    protected static final Boolean COMPONENT_TELNET_PROXY_ENABLED = Boolean.TRUE;
+
     public Main()
     {
         System.out.println("-");
@@ -50,25 +56,34 @@ public class Main
 
             CommonRails.printSystemComponent(this, this.hashCode(),". National NitroExpress™ Web Engine Starting .");
 
-        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME);
+        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME, Main.WEBEXPRESS_TELNET_PROXY_ENABLED);
 
-            nitro.PORT = 49152;
+            configureBridge(nitro);
 
-            nitro.HOST = "localhost";
+        startNitroWebExpress(nitro);
+    }
 
-            nitro.THREAD_NAME = "United States::D500::WebExpress";
+    private static void configureBridge(final NitroWebExpress nitro)
+    {
+        Objects.requireNonNull(nitro, "nitro");
+        Objects.requireNonNull(nitro.bridge, "nitro.bridge");
 
-            nitro.TELNET_PROXY_ENABLED = Boolean.TRUE;
+        nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
 
-            nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
+        nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
+    }
 
-            nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
+    private static void startNitroWebExpress(final NitroWebExpress nitro)
+    {
+        Objects.requireNonNull(nitro, "nitro");
 
-        NitroWebExpress.SELF.start();
+        if(nitro.SERVER_SOCKET==null) throw new IllegalStateException("NitroWebExpress server socket was not initialized.");
+
+        nitro.start();
     }
 
     public static void main(String...args)
     {
-        Main main = new Main();
+        new Main();
     }
 }

@@ -50,6 +50,13 @@ public class NitroWebExpress extends WebExpress
 
     public NitroWebExpress(final Integer PORT, final String HOST, final String THREAD_NAME)
     {
+        this(PORT, HOST, THREAD_NAME, Boolean.TRUE);
+    }
+
+    public NitroWebExpress(final Integer PORT, final String HOST, final String THREAD_NAME, final Boolean TELNET_PROXY_ENABLED)
+    {
+        super(HOST, PORT, THREAD_NAME, TELNET_PROXY_ENABLED);
+
         CommonRails.printSystemComponent(this, 8, ". National ID initialized: "+this.NATIONALID.EIGHT_DIGITS+" .");
 
         CommonRails.printSystemComponent(this, this.hashCode(),". Nitro version of WebExpress Starting .");
@@ -73,7 +80,7 @@ public class NitroWebExpress extends WebExpress
 
         protected TraderModule TRADER_MODULE = new TraderModule(this, "Bitcoin Remote Module 2.0 ADS5.0");
 
-        public AESCompliant AES_COMPONENT = new AESCompliant(AES_COMPLIANT_HOSTNAME, 0, "AES COMPONENT", Boolean.TRUE);
+        public AESCompliant AES_COMPONENT = new AESCompliant();
 
         public BitcoinCompliant BITCOIN_COMPONENT = new BitcoinCompliant();
 
@@ -97,13 +104,13 @@ public class NitroWebExpress extends WebExpress
 
             public AESCompliant(final String HOST, final Integer PORT, final String THREAD_NAME, final Boolean TELNET_PROXY_ENABLED)
             {
-                if(HOST==null || PORT==null || THREAD_NAME==null || TELNET_PROXY_ENABLED) throw new SecurityException("//bodi/connect");
-
-                super(HOST, PORT, THREAD_NAME, TELNET_PROXY_ENABLED);
+                super(requireHost(HOST), requirePort(PORT), requireThreadName(THREAD_NAME), requireTelnetProxyEnabled(TELNET_PROXY_ENABLED));
 
                 this.HOST = HOST;
 
                 this.PORT = PORT;
+
+                this.TELNET_PROXY_ENABLED = TELNET_PROXY_ENABLED;
 
                 this.setName(THREAD_NAME);
             }
@@ -160,13 +167,13 @@ public class NitroWebExpress extends WebExpress
 
             public BitcoinCompliant(final String host, final Integer port, final String thread_name, final Boolean telnet_proxy_enabled)
             {
-                if(host==null || port==null || thread_name==null || telnet_proxy_enabled) throw new SecurityException("//bodi/connect");
-
-                super(host, port, thread_name, telnet_proxy_enabled);
+                super(requireHost(host), requirePort(port), requireThreadName(thread_name), requireTelnetProxyEnabled(telnet_proxy_enabled));
 
                 this.HOST = host;
 
                 this.PORT = port;
+
+                this.TELNET_PROXY_ENABLED = telnet_proxy_enabled;
 
                 this.setName(thread_name);
             }
