@@ -45,6 +45,15 @@ public class MessageQueueSorter extends Thread
                 {
                     if(CommonRails.SocketUtils.isSocketConnected(message.socket))
                     {
+                        if (this.web_express == null || this.web_express.TELNET_COMMUNICATION_PROXY == null || this.web_express.TELNET_COMMUNICATION_PROXY.writer == null)
+                        {
+                            CommonRails.printSystemComponent(this, this.hashCode(), ". WebExpress::MessageQueueSorter >> no telnet proxy writer; dropping message.");
+
+                            message_queue.remove(message);
+
+                            continue;
+                        }
+
                         BufferedWriter writer = this.web_express.TELNET_COMMUNICATION_PROXY.writer;
 
                         CommonRails.printSystemComponent(this, this.hashCode(), ". WebExpress::MessageQueueSorter sending to Telnet message Message: " + message.MESSAGE_BUFFER + " .");
@@ -96,35 +105,43 @@ public class MessageQueueSorter extends Thread
 
                 try
                 {
-                    BufferedReader reader = this.web_express.TELNET_COMMUNICATION_PROXY.reader;
-
-                    if(CommonRails.SocketUtils.isSocketConnected(message.socket))
+                    if (this.web_express == null || this.web_express.TELNET_COMMUNICATION_PROXY == null || this.web_express.TELNET_COMMUNICATION_PROXY.reader == null)
                     {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(message.socket.getOutputStream()));
+                        CommonRails.printSystemComponent(this, this.hashCode(),". WebExpress::MessageQueueSorter >> no telnet proxy reader; skipping read loop.");
 
-                        String line = null;
+                    }
+                    else
+                    {
+                        BufferedReader reader = this.web_express.TELNET_COMMUNICATION_PROXY.reader;
 
-                        while((line=reader.readLine())!=null)
+                        if(CommonRails.SocketUtils.isSocketConnected(message.socket))
                         {
-                            if(CommonRails.SocketUtils.isSocketConnected(message.socket))
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(message.socket.getOutputStream()));
+
+                            String line = null;
+
+                            while((line=reader.readLine())!=null)
                             {
-                                CommonRails.printSystemComponent(this, this.hashCode(),". WebExpress::MessageQueueSorter received from active Telnet session "+ WebExpress.REMOTE_SITE+":"+ WebExpress.REMOTE_PORT+" message "+line+" .");
+                                if(CommonRails.SocketUtils.isSocketConnected(message.socket))
+                                {
+                                    CommonRails.printSystemComponent(this, this.hashCode(),". WebExpress::MessageQueueSorter received from active Telnet session "+ WebExpress.REMOTE_SITE+":"+ WebExpress.REMOTE_PORT+" message "+line+" .");
 
-                                writer.write(line+"\n");
+                                    writer.write(line+"\n");
 
-                                writer.flush();
-                            }
-                            else
-                            {
-                                CurrentConnections connections = this.web_express.current_connections;
+                                    writer.flush();
+                                }
+                                else
+                                {
+                                    CurrentConnections connections = this.web_express.current_connections;
 
-                                connections.remove(message.connection);
+                                    connections.remove(message.connection);
 
-                                EnglishArithemeter arithemeter = new EnglishArithemeter(connections.size());
+                                    EnglishArithemeter arithemeter = new EnglishArithemeter(connections.size());
 
-                                CommonRails.printSystemComponent(this, this.hashCode(),". WebExpress::MessageQueueSorter dropped connection "+message.socket+" - new connection count "+arithemeter.result.arithemetic+" : "+arithemeter.result.numeral+" .");
+                                    CommonRails.printSystemComponent(this, this.hashCode(),". WebExpress::MessageQueueSorter dropped connection "+message.socket+" - new connection count "+arithemeter.result.arithemetic+" : "+arithemeter.result.numeral+" .");
 
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }

@@ -60,7 +60,7 @@ public class MessageOrderer extends Thread
 
         protected InetAddress inet_address;
 
-        protected StringBuffer message_buffer;
+        protected StringBuffer message_buffer = new StringBuffer();
 
         public BitcoinMessage()
         {
