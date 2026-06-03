@@ -1,19 +1,15 @@
-package server.webexpress;
+package server.nitro;
 
 import commons.CommonRails;
-import commons.formatting.LineFormatter;
-import commons.printing.StartsCanonical;
 import messaging.MessageQueue;
 import messaging.MessageQueueSorter;
 import server.base.BaseServer;
-import server.nitro.modules.ConnectionStatusServer;
 import telnet.TelnetCommunicationProxy;
 import telnet.TelnetInstaller;
 
 public class WebExpress extends BaseServer
 {
     protected String hash = "0xDA717018470E213F";
-
     public static final String[] TELNET_PROXY_SERVER_ARGS = new String[]{"telnet", "tacobell.phd", "80"};
 
     public static final Boolean TELNET_PROXY = Boolean.FALSE;
@@ -36,36 +32,54 @@ public class WebExpress extends BaseServer
 
     public MessageQueue MESSAGE_QUEUE = new MessageQueue(this);
 
-    public WebExpress WEBEXPRESS;
+    protected static String requireHost(final String HOST)
+    {
+        if(HOST==null) throw new SecurityException("//bodi/connect");
 
-    public BaseServer BASESERVER;
+        return HOST;
+    }
 
-    /** Status server on port 49155 reporting live connection count for this WebExpress instance. */
-    public ConnectionStatusServer CONNECTION_STATUS_SERVER;
+    protected static Integer requirePort(final Integer PORT)
+    {
+        if(PORT==null || PORT<0 || PORT>65535) throw new SecurityException("//bodi/connect");
+
+        return PORT;
+    }
+
+    protected static String requireThreadName(final String THREAD_NAME)
+    {
+        if(THREAD_NAME==null) throw new SecurityException("//bodi/connect");
+
+        return THREAD_NAME;
+    }
+
+    protected static Boolean requireTelnetProxyEnabled(final Boolean TELNET_PROXY_ENABLED)
+    {
+        if(TELNET_PROXY_ENABLED==null) throw new SecurityException("//bodi/connect");
+
+        return TELNET_PROXY_ENABLED;
+    }
 
     public WebExpress()
     {
-        this.setName("United States D500 WebExpress");
+        this.setName("United States::D500::WebExpress");
     }
 
-    @StartsCanonical
     public WebExpress(final String HOST, final Integer PORT, final String THREAD_NAME, final Boolean TELNET_PROXY_ENABLED)
     {
-        if(HOST==null || PORT==null || THREAD_NAME==null || TELNET_PROXY_ENABLED==null) throw new commons.security.BodiSecurityException("//bodi/connect", Thread.currentThread().getStackTrace()[1]);
+        super(requireHost(HOST), requirePort(PORT));
 
-        super(HOST, PORT);
+        this.INHERITOR = this;
 
-        this.BASESERVER = this.SELF;
+        this.THREAD_NAME = requireThreadName(THREAD_NAME);
 
-        this.SUPERCLASS = this;
+        this.TELNET_PROXY_ENABLED = requireTelnetProxyEnabled(TELNET_PROXY_ENABLED);
 
-        this.THREAD_NAME = THREAD_NAME;
+        CommonRails.printSystemComponent(this, this.hashCode(), ". CommonRails starts .");
 
-        CommonRails.printSystemComponent(this, this.hashCode(), ". CommonRails " + LineFormatter.starts() + " .");
-
-        if(TELNET_PROXY_ENABLED)
+        if(this.TELNET_PROXY_ENABLED)
         {
-            CommonRails.printSystemComponent(this, this.hashCode(), ". "+THREAD_NAME+" "+HOST+" : "+PORT+" Telnet Proxy Enabled .");
+            CommonRails.printSystemComponent(this, this.hashCode(), ". "+this.THREAD_NAME+" "+HOST+" : "+PORT+" Telnet Proxy Enabled .");
 
             this.TELNET_INSTALLER = new TelnetInstaller(this);
 
@@ -75,13 +89,13 @@ public class WebExpress extends BaseServer
 
             this.MESSAGE_QUEUE_SORTER.setName("MessageQueueSorter.TelnetProxy");
 
-            this.TELNET_COMMUNICATION_PROXY.OUTPUT_BUILDER.setName("TelnetCommunicationProxy.Builder.Output");
+            this.TELNET_COMMUNICATION_PROXY.output_builder.setName("TelnetCommunicationProxy.Builder.Output");
 
-            this.TELNET_COMMUNICATION_PROXY.INPUT_BUILDER.setName("TelnetCommunicationProxy.Builder.Input");
+            this.TELNET_COMMUNICATION_PROXY.input_builder.setName("TelnetCommunicationProxy.Builder.Input");
         }
         else
         {
-            CommonRails.printSystemComponent(this, this.hashCode(), ". Main starts "+THREAD_NAME+" HOST : "+PORT+" .");
+            CommonRails.printSystemComponent(this, this.hashCode(), ". Main starts "+this.THREAD_NAME+" HOST : "+PORT+" .");
 
             this.MESSAGE_QUEUE_SORTER = new MessageQueueSorter(this);
 
@@ -90,6 +104,6 @@ public class WebExpress extends BaseServer
 
         this.MESSAGE_QUEUE_SORTER.start();
 
-        this.setName(THREAD_NAME);
+        this.setName(this.THREAD_NAME);
     }
 }

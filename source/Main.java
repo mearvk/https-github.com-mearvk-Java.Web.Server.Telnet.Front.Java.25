@@ -1,15 +1,7 @@
 import commons.CommonRails;
-import communicator.Communicator;
-import configuration.NitroWebExpressConfig;
-import http.BinaryHttpServer;
-import loader.ModuleLoaderDaemon;
-import national.NationalDriver;
 import server.nitro.NitroWebExpress;
-import server.nitro.modules.ConnectionStatusServer;
-import server.nitro.modules.MySQLComponent;
-import server.nitro.modules.ModuleInstallationService;
-import shutdown.ShutdownHooks;
-import weather.WeatherServer;
+
+import java.util.Objects;
 
 /**
  * @author Max Rupplin
@@ -28,85 +20,29 @@ public class Main
 
     protected static final Integer BITCOIN_WEBEXPRESS_SERVER_SOCKET = 6682;
 
-    protected static final String WEB_EXPRESS_SERVER_THREADNAME = "WEBEXPRESS_TELNET_PROXY_SERVER";
+    protected static final String WEB_EXPRESS_SERVER_THREADNAME = ". WEBEXPRESS_TELNET_PROXY_SERVER .";
 
-    protected static final String AES2_WEBEXPRESS_SERVER_THREAD_NAME = "WEBEXPRESS_AES2_SERVER";
+    protected static final String AES2_WEBEXPRESS_SERVER_THREAD_NAME = ". WEBEXPRESS_AES2_SERVER .";
 
-    protected static final String BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME = "WEBEXPRESS_BITCOIN_SERVER";
-
-    protected static final Integer RSA_WEBEXPRESS_SERVER_SOCKET = NitroWebExpress.Aspect.RSACompliant.DEFAULT_PORT;
-
-    protected static final String RSA_WEBEXPRESS_REMOTE_HOST = "localhost";
-
-    protected static final String RSA_WEBEXPRESS_SERVER_THREAD_NAME = NitroWebExpress.Aspect.RSACompliant.DEFAULT_THREAD;
-
-    protected static final Integer DSA_WEBEXPRESS_SERVER_SOCKET = NitroWebExpress.Aspect.DSACompliant.DEFAULT_PORT;
-
-    protected static final String DSA_WEBEXPRESS_REMOTE_HOST = "localhost";
-
-    protected static final String DSA_WEBEXPRESS_SERVER_THREAD_NAME = NitroWebExpress.Aspect.DSACompliant.DEFAULT_THREAD;
+    protected static final String BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME = ". WEBEXPRESS_BITCOIN_SERVER .";
 
     protected static final String WEBEXPRESS_HOSTNAME = "localhost";
 
-    protected static final String AES_WEBEXPRESS_REMOTE_HOST = "localhost";
+    protected static final String AES_WEBEXPRESS_HOST = "localhost";
 
-    protected static final String BINARY_HTTP_SERVER_HOST = "localhost";
-    protected static final String BITCOIN_WEBEXPRESS_REMOTE_HOST = "localhost";
+    protected static final String BITCOIN_WEBEXPRESS_HOST = "localhost";
 
-    protected static final Integer CONNECTION_STATUS_SERVER_PORT = ConnectionStatusServer.STATUS_PORT;
+    protected static final Boolean WEBEXPRESS_TELNET_PROXY_ENABLED = Boolean.TRUE;
 
-    protected static final String CONNECTION_STATUS_SERVER_HOST = "localhost";
-
-    protected static final Integer MODULE_INSTALLER_SERVICE_PORT = ModuleInstallationService.PORT;
-
-    protected static final String MODULE_INSTALLER_SERVICE_HOST = "localhost";
-
-    protected static final Integer ASCII_CREATOR_SERVER_PORT = NitroWebExpress.Aspect.ASCIICreatorServer.PORT;
-
-    protected static final String ASCII_CREATOR_SERVER_HOST = "localhost";
-
-    protected static final Integer MODULE_LOADER_DAEMON_PORT = ModuleLoaderDaemon.PORT;
-
-    protected static final String MODULE_LOADER_DAEMON_HOST = "localhost";
-
-    protected static final Integer COMMUNICATOR_PORT = Communicator.PORT;
-
-    protected static final String COMMUNICATOR_HOST = "localhost";
-
-    protected static final String WEATHER_SERVER_HOST = "localhost";
-
-    public static void main(String...args)
-    {
-        Main main = new Main();
-    }
+    protected static final Boolean COMPONENT_TELNET_PROXY_ENABLED = Boolean.TRUE;
 
     public Main()
     {
-        ShutdownHooks.register();
+        System.out.println("-");
 
-        database.N21AuthConfig.get().ensureMysqlRunning();
+            System.out.println("[ Java National Finance Engine v.28.1.1 Software Processes Starting ]");
 
-        CommonRails.printSystemComponent(this, this.hashCode(),
-            ". CONFIG loaded — authentication/mysql.auth.xml .",
-            commons.color.ColorPalette.COLOR_LIME_GREEN);
-
-        NitroWebExpressConfig.load();
-
-        CommonRails.printSystemComponent(this, this.hashCode(),
-            ". CONFIG loaded — configuration/nwe-config.xml .",
-            commons.color.ColorPalette.COLOR_LIME_GREEN);
-
-        // MySQL N21 connector — early init so DB is available for all boot operations
-        MySQLComponent mysqlComponent = new MySQLComponent();
-        mysqlComponent.print(this);
-        database.N21XmlFallback.replayFallback();
-
-        //CommonRails.printStartRecipeSpinner();
-
-            System.out.println();
-            System.out.println("\033[38;5;74m[ Java National Finance Engine v.28.1.1 Software Processes Starting ]\033[0m");
-
-            System.out.println(". Cryptography/Cryptology AES 2.0 National Cryptolograph Enabled DSS (DeepSonaGraphoSophons) 5.0 .");
+            System.out.println(". Cryptography/Cryptology AES2 National Cryptolograph Enabled DSS 5.0 .");
 
             System.out.println(". Bitcoin Lightweight Binary Trader 2.0 Enabled ₿ Running on Bitcoin Open-Source v24.0 or newer .");
 
@@ -114,86 +50,40 @@ public class Main
 
             System.out.println(". ND51 North Carolina Labors & Standards A5501 ANationals Standards of Cary, NC 2807 .");
 
-            System.out.println(". UNC Chapel Hill medes of 24 Billion PhDs and Granted thereof of Final Marker Rights care of Harvard and Those Universities .");
+        System.out.println("-");
 
-            System.out.println(". Duke University and A91 Artificial Intelligence Program now in Honors .");
-
-            System.out.println(". Java 9 up to Java 25+ Copyrighted, in Private Held and Hand and Held in Contract & Confidence .\n");
-
-        //CommonRails.International.IranWedding.printSystemComponent(this);
-
-            //System.out.print(CommonRails.COLOR_TANGERINE);
             CommonRails.printSystemComponent(this, this.hashCode(),". Java™ National Finance Engine v.2811.1 v.11.1 .");
-            //System.out.print(CommonRails.ANSI_NEAR_RESET_DARK);
 
-        middle.director.DistributionLicense.loadFromDatabase();
-        CommonRails.printSystemComponent(this, this.hashCode(),
-            ". " + middle.director.DistributionLicense.editionBanner() + " .");
-        CommonRails.printSystemComponent(this, this.hashCode(),
-            ". Creator: Max Rupplin — mearvk@mearvk.us | mearvk@outlook.com .");
-        middle.director.PublicKeyVerifier.verify();
+            CommonRails.printSystemComponent(this, this.hashCode(),". National NitroExpress™ Web Engine Starting .");
 
-        NationalDriver DRIVER = new NationalDriver();
+        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME, Main.WEBEXPRESS_TELNET_PROXY_ENABLED);
 
-            DRIVER.printOrderedComponents();
+            configureBridge(nitro);
 
-            DRIVER.clear();
+        startNitroWebExpress(nitro);
+    }
 
-        NitroWebExpress NITRO = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME);
+    private static void configureBridge(final NitroWebExpress nitro)
+    {
+        Objects.requireNonNull(nitro, "nitro");
+        Objects.requireNonNull(nitro.bridge, "nitro.bridge");
 
-            NITRO.PORT = 49152;
+        nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
 
-            NITRO.HOST = "localhost";
+        nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
+    }
 
-            NITRO.THREAD_NAME = "United States D500 WebExpress";
+    private static void startNitroWebExpress(final NitroWebExpress nitro)
+    {
+        Objects.requireNonNull(nitro, "nitro");
 
-            NITRO.TELNET_PROXY_ENABLED = Boolean.TRUE;
+        if(nitro.SERVER_SOCKET==null) throw new IllegalStateException("NitroWebExpress server socket was not initialized.");
 
-            if (NitroWebExpressConfig.isEnabled("AesCompliant"))
-                NITRO.BRIDGE.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_REMOTE_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
+        nitro.start();
+    }
 
-            if (NitroWebExpressConfig.isEnabled("BitcoinCompliant"))
-                NITRO.BRIDGE.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_REMOTE_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
-
-            if (NitroWebExpressConfig.isEnabled("RsaCompliant"))
-                NITRO.BRIDGE.RSA_COMPONENT = new NitroWebExpress.Aspect.RSACompliant(RSA_WEBEXPRESS_REMOTE_HOST, RSA_WEBEXPRESS_SERVER_SOCKET, RSA_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
-
-            if (NitroWebExpressConfig.isEnabled("DsaCompliant"))
-                NITRO.BRIDGE.DSA_COMPONENT = new NitroWebExpress.Aspect.DSACompliant(DSA_WEBEXPRESS_REMOTE_HOST, DSA_WEBEXPRESS_SERVER_SOCKET, DSA_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
-
-            if (NitroWebExpressConfig.isEnabled("ConnectionStatus"))
-                NITRO.BRIDGE.CONNECTION_STATUS = new ConnectionStatusServer(CONNECTION_STATUS_SERVER_HOST, NITRO.CURRENT_CONNECTIONS, NITRO.PORT);
-
-            if (NitroWebExpressConfig.isEnabled("ModuleInstallation"))
-                NITRO.BRIDGE.MODULE_INSTALLER_SERVICE = new NitroWebExpress.Aspect.ModuleInstallationService(MODULE_INSTALLER_SERVICE_HOST);
-
-            if (NitroWebExpressConfig.isEnabled("AsciiCreator"))
-                NITRO.BRIDGE.ASCII_CREATOR_SERVER = new NitroWebExpress.Aspect.ASCIICreatorServer(ASCII_CREATOR_SERVER_HOST);
-
-            if (NitroWebExpressConfig.isEnabled("ModuleLoaderDaemon"))
-                NITRO.BRIDGE.MODULE_LOADER_DAEMON = new ModuleLoaderDaemon(MODULE_LOADER_DAEMON_HOST);
-
-            if (NitroWebExpressConfig.isEnabled("Communicator"))
-                NITRO.BRIDGE.COMMUNICATOR = new Communicator(COMMUNICATOR_HOST);
-
-            if (NitroWebExpressConfig.isEnabled("BinaryHttp"))
-                NITRO.BRIDGE.BINARY_HTTP_SERVER = new BinaryHttpServer(BINARY_HTTP_SERVER_HOST);
-
-            if (NitroWebExpressConfig.isEnabled("Weather"))
-                NITRO.BRIDGE.WEATHER_SERVER = new WeatherServer(WEATHER_SERVER_HOST);
-
-            if (NitroWebExpressConfig.isEnabled("Antivirus"))
-                new antivirus.AntivirusScanner().start();
-
-            if (NitroWebExpressConfig.isEnabled("BitcoinWalletIndexer"))
-                Thread.ofVirtual().name("BitcoinWalletIndexer").start(() -> new bitcoin.module.BitcoinWalletIndexer().indexAll());
-            else
-                bitcoin.module.BitcoinWalletIndexer.seedDefaults();
-
-            NITRO.BRIDGE.MYSQL_COMPONENT = mysqlComponent;
-
-            new lanterna.TerminalMenu().start();
-
-            NITRO.BRIDGE.start();
+    public static void main(String...args)
+    {
+        new Main();
     }
 }

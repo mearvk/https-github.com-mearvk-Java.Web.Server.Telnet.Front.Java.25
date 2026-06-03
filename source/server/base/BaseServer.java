@@ -1,10 +1,7 @@
 package server.base;
 
 import commons.CommonRails;
-import configuration.NitroWebExpressConfig;
 import connections.*;
-import exceptions.ExceptionHandler;
-import heuristics.college.HeuristicClassifier;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,11 +12,9 @@ import java.net.ServerSocket;
 
 public abstract class BaseServer extends Thread
 {
-    public Integer HASH = 0x008808FF;
+    public Integer hash = 0x008808FF;
 
-    public BaseServer SUPERCLASS;
-
-    public BaseServer SELF;
+    public BaseServer INHERITOR;
     public static final Integer BASE_CONNECTION_TIMEOUT = 43200 * 2 * 2 * 1000;
 
     public String HOST = "localhost";
@@ -32,72 +27,51 @@ public abstract class BaseServer extends Thread
 
     public Boolean RUNNING = true;
 
+    public CurrentConnections current_connections = new CurrentConnections();
 
-    public CurrentConnections CURRENT_CONNECTIONS = new CurrentConnections();
+    private final RecordedConnections recorded_connections = new RecordedConnections();
 
-    private final RecordedConnections RECORDED_CONNECTIONS = new RecordedConnections();
-
-    private final InternationalConnections INTERNATIONAL_CONNECTIONS = new InternationalConnections();
-
-    /** Shared classifier — one instance per server so rate/geo state is pooled per port. */
-    private final HeuristicClassifier HEURISTIC = new HeuristicClassifier();
+    private final InternationalConnections international_connections = new InternationalConnections();
 
     public BaseServer()
     {
-        System.out.println(this.HASH);
+        System.out.println(this.hash);
     }
 
-    public BaseServer(final String HOST, final Integer PORT)
+    public BaseServer(String host, Integer PORT)
     {
-        if(HOST==null || PORT ==null) throw new commons.security.BodiSecurityException("//bodi/connect", Thread.currentThread().getStackTrace()[1]);
+        if(host==null || PORT ==null) throw new SecurityException("//bodi/connect");
 
-        this.HOST = HOST;
+        this.HOST = host;
 
         this.PORT = PORT;
-
-        this.SUPERCLASS = this;
-
-        this.SELF = this;
 
         this.setName("BasicServer");
 
         try
         {
-            this.ADDRESS = InetAddress.getByName(HOST);
+            this.ADDRESS = InetAddress.getByName(host);
         }
         catch(Exception e)
         {
-            ExceptionHandler.dispatch(e);
-            e.printStackTrace(System.err);
-
-            this.RUNNING = false;
-
-            return;
+            throw new IllegalStateException("Unable to resolve server host "+host, e);
         }
 
         try
         {
             this.SERVER_SOCKET = new ServerSocket(this.PORT, 4096, this.ADDRESS);
+
+            CommonRails.printSystemComponent(this, this.hashCode(),". BaseServer::ServerSocket created on Port "+this.PORT +" .");
         }
         catch(Exception e)
         {
-            ExceptionHandler.dispatch(e);
-            e.printStackTrace(System.err);
-
-            // mark as not running so run() will not attempt accept on a null socket
-            this.RUNNING = false;
-
-            return;
-        }
-        finally
-        {
-            CommonRails.printSystemComponent(this, this.hashCode(),". BaseServer ServerSocket created on Port "+this.PORT +" .");
+            throw new IllegalStateException("Unable to create server socket on "+host+":"+this.PORT, e);
         }
     }
 
-    public BaseServer(final Integer PORT)
+    public BaseServer(Integer PORT)
     {
-        if(PORT ==null) throw new commons.security.BodiSecurityException("//bodi/connect", Thread.currentThread().getStackTrace()[1]);
+        if(PORT ==null) throw new SecurityException("//bodi/connect");
 
         this.PORT = PORT;
 
@@ -109,30 +83,18 @@ public abstract class BaseServer extends Thread
         }
         catch(Exception e)
         {
-            ExceptionHandler.dispatch(e);
-            e.printStackTrace(System.err);
-
-            this.RUNNING = false;
-
-            return;
+            throw new IllegalStateException("Unable to resolve server host "+HOST, e);
         }
 
         try
         {
             this.SERVER_SOCKET = new ServerSocket(this.PORT, 4096, this.ADDRESS);
+
+            CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress::BaseServer] [Server created on Port ["+this.PORT +"]]");
         }
         catch(Exception e)
         {
-            ExceptionHandler.dispatch(e);
-            e.printStackTrace(System.err);
-
-            this.RUNNING = false;
-
-            return;
-        }
-        finally
-        {
-            CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress BaseServer] [Server created on Port ["+this.PORT+"]]" );
+            throw new IllegalStateException("Unable to create server socket on "+HOST+":"+this.PORT, e);
         }
     }
 
@@ -141,119 +103,84 @@ public abstract class BaseServer extends Thread
     {
         try
         {
-            // Defensive: if server socket failed to initialize the constructor set RUNNING=false;
-            if (this.SERVER_SOCKET == null)
-            {
-                CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress BaseServer] [SERVER_SOCKET is null; server not started]");
-
-                return;
-            }
-
             while(RUNNING)
             {
                 Connection connection;
 
                 connection = new Connection(this);
 
-                connection.SOCKET = this.SERVER_SOCKET.accept();
+                connection.socket = this.SERVER_SOCKET.accept();
 
-                connection.SOCKET.setSoTimeout(BaseServer.BASE_CONNECTION_TIMEOUT);
+                connection.socket.setSoTimeout(BaseServer.BASE_CONNECTION_TIMEOUT);
 
-                connection.remote_address = connection.SOCKET.getRemoteSocketAddress().toString();
+                connection.remote_address = connection.socket.getRemoteSocketAddress().toString();
 
-                connection.internet_address = connection.SOCKET.getInetAddress();
+                connection.internet_address = connection.socket.getInetAddress();
 
-                connection.SERVER = this;
+                connection.server = this;
 
-                // ── Heuristic classification ──────────────────────────────────
-                if (NitroWebExpressConfig.isEnabled("HeuristicClassifier"))
-                {
-                    String remoteIp = connection.SOCKET.getInetAddress().getHostAddress();
-                    HeuristicClassifier.ConnectionEvent event =
-                        new HeuristicClassifier.ConnectionEvent.Builder()
-                            .ip(remoteIp)
-                            .port(this.PORT)
-                            .build();
-                    HeuristicClassifier.Classification result = HEURISTIC.classify(event);
-                    CommonRails.printSystemComponent(this, this.hashCode(), result.summary());
-                    for (String finding : result.findings())
-                        CommonRails.printSystemComponent(HEURISTIC, HEURISTIC.hashCode(), finding);
-                    if (result.threat)
-                    {
-                        connection.SOCKET.close();
-                        continue;
-                    }
-                }
-                // ─────────────────────────────────────────────────────────────
-
-                CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress BaseServer] [New remote connection established [remote-ephemeral: "+connection.remote_address+" : local: "+this.PORT +"]]");
+                CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress::BaseServer] [New remote connection established [remote-ephemeral: "+connection.remote_address+" : local: "+this.PORT +"]]");
 
                 try
                 {
-                    connection.inputstream = connection.SOCKET.getInputStream();
+                    connection.inputstream = connection.socket.getInputStream();
 
                     connection.reader = new BufferedReader(new InputStreamReader(connection.inputstream));
                 }
                 catch(Exception e)
                 {
-                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
 
                     return;
                 }
                 finally
                 {
-                    CommonRails.printSystemComponent(this, this.hashCode(),"[WebExpress BaseServer] [Related input reader established ["+this.ADDRESS +":"+this.PORT +"]]");
+                    CommonRails.printSystemComponent(this, this.hashCode(),"[WebExpress::BaseServer] [Related input reader established ["+this.ADDRESS +":"+this.PORT +"]]");
                 }
 
                 try
                 {
-                    connection.outputstream = connection.SOCKET.getOutputStream();
+                    connection.outputstream = connection.socket.getOutputStream();
 
                     connection.writer = new BufferedWriter(new OutputStreamWriter(connection.outputstream));
                 }
                 catch(Exception e)
                 {
-                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
 
                     return;
                 }
                 finally
                 {
-                    CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress BaseServer] [Related output writer established ["+this.ADDRESS +":"+this.PORT +"]]");
+                    CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress::BaseServer] [Related output writer established ["+this.ADDRESS +":"+this.PORT +"]]");
                 }
 
                 try
                 {
-                    connection.thread = new ConnectionPoller(this, this.HOST, this.PORT);
+                    connection.thread = new ConnectionPoller(null,this, this.HOST, this.PORT);
 
                     connection.thread.start();
                 }
                 catch(Exception e)
                 {
-                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
 
                     return;
                 }
                 finally
                 {
-                    CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress BaseServer] [Related I/O listener thread established ["+this.ADDRESS +":"+this.PORT +"]]");
+                    CommonRails.printSystemComponent(this, this.hashCode(), "[WebExpress::BaseServer] [Related I/O listener thread established ["+this.ADDRESS +":"+this.PORT +"]]");
                 }
 
-                this.CURRENT_CONNECTIONS.add(connection);
+                this.current_connections.add(connection);
 
-                this.RECORDED_CONNECTIONS.add(connection);
+                this.recorded_connections.add(connection);
 
-                this.INTERNATIONAL_CONNECTIONS.add(connection);
-
-                database.N21Store.storeConnection(connection, this.PORT);
+                this.international_connections.add(connection);
             }
         }
         catch(Exception se)
         {
-            ExceptionHandler.dispatch(se);
             se.printStackTrace(System.err);
         }
     }
