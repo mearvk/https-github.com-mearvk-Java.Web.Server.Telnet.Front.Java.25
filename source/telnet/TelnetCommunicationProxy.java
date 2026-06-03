@@ -69,25 +69,30 @@ public class TelnetCommunicationProxy
         {
             for(;;)
             {
-                StringBuffer buffer;
+                StringBuffer buffer = null;
 
                 try
                 {
-                    TelnetMessageQueue.Message message = new TelnetMessageQueue.Message();
-
                     final TelnetCommunicationProxy proxy = this.telnet_communication_proxy;
 
                     String line = proxy.reader.readLine();
 
-                    if(line!=null)
+                    if(line != null)
                     {
+                        TelnetMessageQueue.Message message = new TelnetMessageQueue.Message();
+
+                        // collect first line and subsequent available lines
                         message.message_buffer.append(line);
 
-                        while ( (line=proxy.reader.readLine()) !=null)
+                        while ((line = proxy.reader.readLine()) != null)
                         {
-                            message.message_buffer.append(line);
+                            message.message_buffer.append('\n').append(line);
                         }
 
+                        // keep a reference to buffer for optional outbound use
+                        buffer = message.message_buffer;
+
+                        // enqueue received data for input processing
                         proxy.input_builder.telnet_message_queue.add(message);
                     }
                 }
@@ -95,37 +100,43 @@ public class TelnetCommunicationProxy
                 {
                     e.printStackTrace(System.err);
                 }
-                finally
+
+                // If we have data (buffer), create an outbound message for the output queue
+                if (buffer != null)
                 {
-                    buffer = null;
+                    try
+                    {
+                        TelnetMessageQueue.Message outMsg = new TelnetMessageQueue.Message();
+
+                        outMsg.port = Integer.valueOf(WebExpress.REMOTE_PORT);
+
+                        outMsg.protocol = WebExpress.PROTOCOL;
+
+                        outMsg.socket = proxy.socket;
+
+                        outMsg.message_buffer = buffer;
+
+                        outMsg.time_stamp = new Date();
+
+                        outMsg.internet_address = InetAddress.getByName(WebExpress.REMOTE_SITE);
+
+                        this.telnet_communication_proxy.output_builder.telnet_message_queue.add(outMsg);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace(System.err);
+                    }
+                    finally
+                    {
+                        // check the actual socket if available
+                        try {
+                            CommonRails.SocketUtils.isSocketConnected(this.telnet_communication_proxy.socket);
+                        } catch (Exception ignored) {
+                        }
+                    }
                 }
 
-                try
-                {
-                    TelnetMessageQueue.Message message = new TelnetMessageQueue.Message();
-
-                    message.port = Integer.valueOf(WebExpress.REMOTE_PORT);
-
-                    message.protocol = WebExpress.PROTOCOL;
-
-                    message.socket = null;
-
-                    message.message_buffer = buffer;
-
-                    message.time_stamp = new Date();
-
-                    message.internet_address = InetAddress.getByName(WebExpress.REMOTE_SITE);
-
-                    this.telnet_communication_proxy.output_builder.telnet_message_queue.add(message);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace(System.err);
-                }
-                finally
-                {
-                    CommonRails.SocketUtils.isSocketConnected(null);
-                }
+                try { Thread.sleep(100); } catch (Exception e) { /* throttle loop a bit */ }
             }
         }
     }

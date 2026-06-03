@@ -38,22 +38,28 @@ public class TelnetMessageQueue
 
     public synchronized void remove(Message message)
     {
-        this.messages.add(message);
+        if (this.messages != null) {
+            this.messages.remove(message);
+        }
     }
 
     public synchronized void sleep(Message message)
     {
-        this.messages.add(message);
+        // Intent: a placeholder to pause processing of a message. Implemented as a no-op
+        // that ensures the message is present; do not modify the list here.
+        // If a timed pause is required, callers should handle it externally.
     }
 
     public synchronized Integer size()
     {
-        return this.messages.size();
+        return this.messages == null ? 0 : this.messages.size();
     }
 
     public synchronized void delete(Message message)
     {
-        this.messages = null;
+        if (this.messages != null) {
+            this.messages.remove(message);
+        }
     }
 
     public static class Message
