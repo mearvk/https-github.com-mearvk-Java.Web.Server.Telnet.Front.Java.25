@@ -1,107 +1,149 @@
 package commons;
 
-import commons.printing.ComponentPrinter;
-import commons.process.ProcessRegistry;
+import server.nitro.WebExpress;
 
-public final class CommonRails
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class CommonRails
 {
+    protected String hash = "0xDA717018470E213F";
 
-    public static java.util.function.Consumer<Exception> EXCEPTION_SINK = e -> {e.printStackTrace(System.err);};
-
-    private static final Boolean USE_COLORED_OUTPUT = true;
-
-    private CommonRails() {}
-
-    public static void printSystemComponent(Object owner, int hash, String line) {
-        ComponentPrinter.print(owner, hash, line);
-    }
-
-    public static void printSystemComponent(Object owner, int hash, String line, String oidColor) {
-        ComponentPrinter.print(owner, hash, line, oidColor);
-    }
-
-    public static void registerProcess(ProcessBuilder pb, Process p, Object owner) {
-        ProcessRegistry.register(pb, p, owner);
-    }
-
-    public static void printShutdownSignal(final Object OWNER, final int PORT, final String PHASE)
+    public CommonRails()
     {
-        String module = switch (PORT)
-        {
-            case 49152 -> "NitroWebExpress";
-            case 49155 -> "ConnectionStatus";
-            case 49166 -> "ModuleInstallation";
-            case 49177 -> "AsciiCreator";
-            case 49188 -> "ModuleLoaderDaemon";
-            case 49199 -> "Communicator";
-            case 49200 -> "TerminalMenu";
-            case 49144 -> "BinaryHttp";
-            case 49133 -> "Weather";
-            case 5512 -> "AesCompliant";
-            case 6682 -> "BitcoinCompliant";
-            case 7743 -> "RsaCompliant";
-            case 7744 -> "DsaCompliant";
-            case 8888 -> "MiddleDirectorServer";
-            default -> "Port-" + PORT;
-        };
 
-        printSystemComponent(OWNER, OWNER.hashCode(), ". [shutdown] " + PHASE + " " + module + " port " + PORT + " .", commons.color.ColorPalette.COLOR_SHUTDOWN);
     }
 
-    public static void delayableFinePrinter(final String TEXT, final int DELAY)
+    public static <T> Integer size(ArrayList<T> list)
     {
-        // When colored output is disabled, just print a single plain line and ensure ANSI reset.
-        if (!USE_COLORED_OUTPUT)
-        {
-            try
-            {
-                System.out.println(TEXT);
+        return list.size();
+    }
 
-                // ensure terminal color state is reset
-                System.out.print("\u001B[0m");
-            }
-            catch (Exception e)
-            {
-                //EXCEPTION_SINK.accept(e);
+    public static void printSystemComponent(final Object object,  final Integer hashcode, String line)
+    {
+        String classname = "[Current: "+object.getClass().getSimpleName()+"]";
 
-                e.printStackTrace(System.err);
-            }
+        String compliant_hashcode = String.format("%010d", hashcode);
 
-            return;
-        }
+        String object_id = "-- : [Object ID: "+compliant_hashcode+"]";
 
-        // Grayscale fade: dark grey -> full white using ANSI 256-color codes 236..255 (20 steps)
-        int[] codes = new int[20];
-        for (int k = 0; k < 20; k++) codes[k] = 236 + k; // 236..255
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+        String date = "[Date: "+formatter.format(new Date())+"]";
+
+        String reference = object_id + " "+ date + " " + classname + " " + line;
+
+        CommonRails.delayableFinePrinter(reference, 21);
+
+        //System.out.println("\u001B[0m");
+    }
+
+    public static void delayableFinePrinter(final String text, int delay)
+    {
+        int[] codes = {232, 233, 234, 235, 236, 237, 238, 241, 244, 247, 250, 253, 188};
 
         try
         {
             for(int color : codes)
             {
-                System.out.print("\033[38;5;" + color + "m" + TEXT + "\r");
+                System.out.print("\033[38;5;" + color + "m" + text + "\r");
 
-                // per-grade DELAY fixed at 20ms for a smoother, more emotive fade
-                Thread.sleep(20);
+                Thread.sleep(delay);
             }
 
-            System.out.print("\u001B[0m");
+            Thread.sleep(400L);
 
-            Thread.sleep(200L);
-
-            System.out.println(TEXT);
-
-            System.out.print("\u001B[0m");
+            System.out.println(text);
         }
         catch (Exception e)
         {
-            //EXCEPTION_SINK.accept(e);
-
             e.printStackTrace(System.err);
         }
     }
 
-    public static void setExceptionSink(final java.util.function.Consumer<Exception> SINK)
+    protected static void _long(final String orgasm,  final WebExpress web_express, Integer not_less_than)
     {
-        if (SINK != null) EXCEPTION_SINK = SINK;
+        try
+        {
+            Thread.sleep(not_less_than);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace(System.err);
+        }
+
+        switch (orgasm)
+        {
+            case "TelnetCommunicator::Close::Hook":
+
+                try
+                {
+                    TelnetCallOnComplete call_on_complete = new TelnetCallOnComplete(web_express);
+
+                    call_on_complete.run();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace(System.err);
+                }
+
+                break;
+        }
+    }
+
+    public static class SocketUtils
+    {
+        public static Boolean isSocketConnected(Socket socket)
+        {
+            try
+            {
+                socket.getOutputStream().write("".getBytes());
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static Boolean isSocketClosed(Socket socket)
+        {
+            try
+            {
+                socket.getOutputStream().write("".getBytes());
+            }
+            catch(Exception e)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public static class TelnetCallOnComplete implements Runnable
+    {
+        protected WebExpress web_express;
+
+        public TelnetCallOnComplete(WebExpress web_express)
+        {
+            this.web_express = web_express;
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                int return_value = this.web_express.TELNET_COMMUNICATION_PROXY.process.waitFor();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace(System.err);
+            }
+        }
     }
 }

@@ -1,13 +1,5 @@
-/**
- * File-level Javadoc.
- *
- * @author Max Rupplin
- * @date June 03 2026 EST
- */
-
 package encryption.module.aes.two;
 
-import exceptions.ExceptionHandler;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Random;
@@ -18,22 +10,22 @@ public class EncryptionModule
 
     public int ROUNDS = 32;
 
-    public String PLAIN_TEXT = "";
+    public String plain_text = "";
 
     public String initial_pad = "";
 
     public String cipher_text = "";
 
-    public EncryptionModule(final Random RANDOM,  final String TITLE, final String PLAIN_TEXT)
+    public EncryptionModule(final Random random,  final String title, String plain_text)
     {
-        this.PLAIN_TEXT = PLAIN_TEXT;
+        this.plain_text = plain_text;
     }
 
     public void one()
     {
         int sub = 0x88034321;
 
-        this.initial_pad = Integer.toString(sub | Integer.parseInt(Integer.toOctalString(Integer.parseInt(PLAIN_TEXT))));
+        this.initial_pad = Integer.toString(sub | Integer.parseInt(Integer.toOctalString(Integer.parseInt(plain_text))));
     }
 
     /**
@@ -92,7 +84,6 @@ public class EncryptionModule
             }
             catch(Exception e)
             {
-                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
@@ -101,7 +92,7 @@ public class EncryptionModule
     //Lightning Rounds
     public void three()
     {
-        BufferedReader reader001 = new BufferedReader(new StringReader(this.PLAIN_TEXT));
+        BufferedReader reader001 = new BufferedReader(new StringReader(this.plain_text));
 
         for(int i=1; i<3; i++)
         {
@@ -113,12 +104,11 @@ public class EncryptionModule
             }
             catch (Exception e)
             {
-                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
 
-        BufferedReader reader002 = new BufferedReader(new StringReader(this.PLAIN_TEXT));
+        BufferedReader reader002 = new BufferedReader(new StringReader(this.plain_text));
 
         String result_1_07 = "";
         String result_1_02 = "";
@@ -153,12 +143,11 @@ public class EncryptionModule
             }
             catch (Exception e)
             {
-                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
 
-        BufferedReader reader = new BufferedReader(new StringReader(this.PLAIN_TEXT));
+        BufferedReader reader = new BufferedReader(new StringReader(this.plain_text));
 
         String altered_plain_text = "";
 
@@ -194,7 +183,6 @@ public class EncryptionModule
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
                 }
             }
@@ -227,7 +215,6 @@ public class EncryptionModule
             }
             catch (Exception e)
             {
-                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
@@ -254,7 +241,6 @@ public class EncryptionModule
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
                 }
             }
