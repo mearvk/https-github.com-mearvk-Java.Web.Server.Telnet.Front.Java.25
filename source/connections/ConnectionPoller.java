@@ -31,7 +31,7 @@ public class ConnectionPoller extends Thread
 
     protected static final Integer READ_WRITE_STANDARD_SOCKET_TIMEOUT = 60*2*1000;
 
-    public ConnectionPoller(WebExpress web_express, BaseServer base_server, String host, Integer port)
+    public ConnectionPoller(final WebExpress web_express,  final BaseServer base_server,  final String host, Integer port)
     {
         this.web_express = web_express;
 
@@ -44,7 +44,7 @@ public class ConnectionPoller extends Thread
         this.setName("ConnectionPoller");
     }
 
-    public ConnectionPoller(WebExpress web_express, BaseServer base_server)
+    public ConnectionPoller(final WebExpress web_express, BaseServer base_server)
     {
         this.web_express = web_express;
 

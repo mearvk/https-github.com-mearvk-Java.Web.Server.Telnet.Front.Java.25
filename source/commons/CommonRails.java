@@ -21,7 +21,7 @@ public class CommonRails
         return list.size();
     }
 
-    public static void printSystemComponent(Object object, Integer hashcode, String line)
+    public static void printSystemComponent(final Object object,  final Integer hashcode, String line)
     {
         String classname = "[Current: "+object.getClass().getSimpleName()+"]";
 
@@ -40,7 +40,7 @@ public class CommonRails
         //System.out.println("\u001B[0m");
     }
 
-    public static void delayableFinePrinter(String text, int delay)
+    public static void delayableFinePrinter(final String text, int delay)
     {
         int[] codes = {232, 233, 234, 235, 236, 237, 238, 241, 244, 247, 250, 253, 188};
 
@@ -63,7 +63,7 @@ public class CommonRails
         }
     }
 
-    protected static void _long(final String orgasm, WebExpress web_express, Integer not_less_than)
+    protected static void _long(final String orgasm,  final WebExpress web_express, Integer not_less_than)
     {
         try
         {
