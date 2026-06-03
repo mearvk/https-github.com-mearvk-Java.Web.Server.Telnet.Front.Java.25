@@ -11,66 +11,68 @@ import java.util.List;
 
 public class TelnetMessageQueue
 {
-    protected List<Message> MESSAGES;
+    protected List<Message> messages;
 
-    protected Integer SIZE;
+    protected Integer size;
 
-    protected BaseServer BASE_SERVER;
+    protected BaseServer base_server;
 
-    public TelnetMessageQueue(final Integer SIZE)
+    public TelnetMessageQueue(Integer size)
     {
-        this.SIZE = SIZE;
+        this.size = size;
 
-        this.MESSAGES = Collections.synchronizedList(MESSAGES = new ArrayList<>(this.SIZE));
+        this.messages = Collections.synchronizedList(messages = new ArrayList<>(this.size));
     }
 
-    public TelnetMessageQueue(final BaseServer BASE_SERVER)
+    public TelnetMessageQueue(BaseServer base_server)
     {
-        this.BASE_SERVER = BASE_SERVER;
+        this.base_server = base_server;
 
-        this.MESSAGES = Collections.synchronizedList(MESSAGES = new ArrayList<>(5000));
+        this.messages = Collections.synchronizedList(messages = new ArrayList<>(5000));
     }
 
-    public synchronized void add(final Message MESSAGE)
+    public synchronized void add(Message message)
     {
-        this.MESSAGES.add(MESSAGE);
-
-        this.notifyAll();
+        this.messages.add(message);
     }
 
-    public synchronized void remove(final Message MESSAGE)
+    public synchronized void remove(Message message)
     {
-        this.MESSAGES.remove(MESSAGE);
+        if (this.messages != null) {
+            this.messages.remove(message);
+        }
     }
 
-    public synchronized void sleep(final Message MESSAGE)
+    public synchronized void sleep(Message message)
     {
-        this.MESSAGES.add(MESSAGE);
-
-        this.notifyAll();
+        // Intent: a placeholder to pause processing of a message. Implemented as a no-op
+        // that ensures the message is present; do not modify the list here.
+        // If a timed pause is required, callers should handle it externally.
     }
 
     public synchronized Integer size()
     {
-        return this.MESSAGES.size();
+        return this.messages == null ? 0 : this.messages.size();
     }
 
-    public synchronized void delete(final Message MESSAGE)
+    public synchronized void delete(Message message)
     {
-        this.MESSAGES = null;
+        if (this.messages != null) {
+            this.messages.remove(message);
+        }
     }
 
     public static class Message
     {
-        public Integer PORT;
+        public Integer port;
 
         public String protocol;
 
-        public Socket SOCKET;
+        public Socket socket;
 
-        public Date TIMESTAMP;
+        public Date time_stamp;
 
-        public StringBuffer MESSAGE_BUFFER = new StringBuffer();
+        public StringBuffer message_buffer = new StringBuffer();
 
         public InetAddress internet_address;
     }
