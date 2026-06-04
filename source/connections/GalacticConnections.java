@@ -53,7 +53,7 @@ public class GalacticConnections
 
         RecordedGalacticConnection record = new RecordedGalacticConnection();
 
-        record.socket = x.socket;
+        record.socket = x.SOCKET;
 
         record.connection_date = x.inception_date;
 
