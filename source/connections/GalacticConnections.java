@@ -31,7 +31,7 @@ public class GalacticConnections
 
         public Date inception_date;
 
-        public Socket SOCKET;
+        public Socket socket;
 
         public String remote_address;
 
@@ -47,13 +47,13 @@ public class GalacticConnections
         }
     }
 
-    public synchronized void add(final Connection CONNECTION)
+    public synchronized void add(final Connection connection)
     {
-        Connection x = CONNECTION;
+        Connection x = connection;
 
         RecordedGalacticConnection record = new RecordedGalacticConnection();
 
-        record.SOCKET = x.SOCKET;
+        record.socket = x.SOCKET;
 
         record.connection_date = x.inception_date;
 
@@ -64,11 +64,11 @@ public class GalacticConnections
         this.recorded_international_connections.add(record);
     }
 
-    public synchronized void remove(final Socket SOCKET)
+    public synchronized void remove(final Socket socket)
     {
         for(int i=0; i<this.recorded_international_connections.size(); i++)
         {
-            if(this.recorded_international_connections.get(i).SOCKET==SOCKET)
+            if(this.recorded_international_connections.get(i).socket==socket)
             {
                 RecordedGalacticConnection connection = this.recorded_international_connections.get(i);
 
@@ -77,9 +77,9 @@ public class GalacticConnections
         }
     }
 
-    public synchronized void remove(final RecordedGalacticConnection CONNECTION)
+    public synchronized void remove(RecordedGalacticConnection connection)
     {
-        this.recorded_international_connections.remove(CONNECTION);
+        this.recorded_international_connections.remove(connection);
     }
 
     public synchronized Integer size()

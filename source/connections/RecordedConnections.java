@@ -31,7 +31,7 @@ public class RecordedConnections
 
         public Date inception_date;
 
-        public Socket SOCKET;
+        public Socket socket;
 
         public String remote_address;
 
@@ -47,13 +47,13 @@ public class RecordedConnections
         }
     }
 
-    public synchronized void add(final Connection CONNECTION)
+    public synchronized void add(final Connection connection)
     {
-        Connection x = CONNECTION;
+        Connection x = connection;
 
         RecordedConnection record = new RecordedConnection();
 
-        record.SOCKET = x.SOCKET;
+        record.socket = x.SOCKET;
 
         record.connection_date = x.inception_date;
 
@@ -64,11 +64,11 @@ public class RecordedConnections
         this.recorded_connections.add(record);
     }
 
-    public synchronized void remove(final Socket SOCKET)
+    public synchronized void remove(final Socket socket)
     {
         for(int i=0; i<this.recorded_connections.size(); i++)
         {
-            if(this.recorded_connections.get(i).SOCKET==SOCKET)
+            if(this.recorded_connections.get(i).socket==socket)
             {
                 RecordedConnection connection = this.recorded_connections.get(i);
 
@@ -77,9 +77,9 @@ public class RecordedConnections
         }
     }
 
-    public synchronized void remove(final RecordedConnection CONNECTION)
+    public synchronized void remove(RecordedConnection connection)
     {
-        this.recorded_connections.remove(CONNECTION);
+        this.recorded_connections.remove(connection);
     }
 
     public synchronized Integer size()

@@ -14,7 +14,7 @@ import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
 public class CurrentConnections
 {
@@ -36,29 +36,31 @@ public class CurrentConnections
 
     public ConnectionPoller thread;
 
-    // CopyOnWriteArrayList: safe for concurrent add (BaseServer) + iterate/remove (ConnectionPoller)
-    public CopyOnWriteArrayList<Connection> CURRENT_CONNECTION = new CopyOnWriteArrayList<Connection>();
+    public ArrayList<Connection> CURRENT_CONNECTION = new ArrayList<Connection>();
 
-    public void add(final Connection CONNECTION)
+    public void add(Connection connection)
     {
-        this.CURRENT_CONNECTION.add(CONNECTION);
+        this.CURRENT_CONNECTION.add(connection);
     }
 
-    public void remove(final Socket SOCKET)
+    public void remove(Socket socket)
     {
-        for(int i = 0; i < this.CURRENT_CONNECTION.size(); i++)
+        for(int i = 0; i<this.CURRENT_CONNECTION.size(); i++)
         {
-            if(this.CURRENT_CONNECTION.get(i).SOCKET == SOCKET)
+            Socket _socket = this.CURRENT_CONNECTION.get(i).SOCKET;
+
+            if(_socket==socket)
             {
-                this.CURRENT_CONNECTION.remove(i);
-                break; // remove only first match
+                Connection connection = this.CURRENT_CONNECTION.get(i);
+
+                this.CURRENT_CONNECTION.remove(connection);
             }
         }
     }
 
-    public void remove(final Connection CONNECTION)
+    public void remove(Connection connection)
     {
-        this.CURRENT_CONNECTION.remove(CONNECTION);
+        this.CURRENT_CONNECTION.remove(connection);
     }
 
     public Integer size()
