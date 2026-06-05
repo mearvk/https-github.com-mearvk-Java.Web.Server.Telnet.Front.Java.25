@@ -7,6 +7,8 @@
 
 package sim;
 
+import exceptions.ExceptionHandler;
+
 public class stochastic
 {
     private static final Object telnet_communication_proxy = new Object();
@@ -54,6 +56,7 @@ public class stochastic
         }
         catch (Exception e)
         {
+            ExceptionHandler.dispatch(e);
             final LongSummaryStatistics long_summary_stats = new LongSummaryStatistics();
 
             long_summary_stats.accept(_asm);
