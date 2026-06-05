@@ -1,13 +1,7 @@
-/**
- * File-level Javadoc.
- *
- * @author Max Rupplin
- * @date June 03 2026 EST
- */
-
 package telnet;
 
 import commons.CommonRails;
+import exceptions.ExceptionHandler;
 import server.nitro.WebExpress;
 
 import java.io.BufferedReader;
@@ -50,7 +44,8 @@ public class TelnetInstaller
         }
         catch (Exception e)
         {
-            throw new IllegalStateException("Unable to start telnet proxy command "+this.process_builder.command(), e);
+            ExceptionHandler.dispatch(e);
+            e.printStackTrace(System.err);
         }
     }
 }
