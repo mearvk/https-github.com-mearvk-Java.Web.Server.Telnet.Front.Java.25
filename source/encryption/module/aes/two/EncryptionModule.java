@@ -7,6 +7,7 @@
 
 package encryption.module.aes.two;
 
+import exceptions.ExceptionHandler;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Random;
@@ -91,6 +92,7 @@ public class EncryptionModule
             }
             catch(Exception e)
             {
+                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
@@ -111,6 +113,7 @@ public class EncryptionModule
             }
             catch (Exception e)
             {
+                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
@@ -150,6 +153,7 @@ public class EncryptionModule
             }
             catch (Exception e)
             {
+                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
@@ -190,6 +194,7 @@ public class EncryptionModule
                 }
                 catch (Exception e)
                 {
+                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
                 }
             }
@@ -222,6 +227,7 @@ public class EncryptionModule
             }
             catch (Exception e)
             {
+                ExceptionHandler.dispatch(e);
                 e.printStackTrace(System.err);
             }
         }
@@ -248,6 +254,7 @@ public class EncryptionModule
                 }
                 catch (Exception e)
                 {
+                    ExceptionHandler.dispatch(e);
                     e.printStackTrace(System.err);
                 }
             }
