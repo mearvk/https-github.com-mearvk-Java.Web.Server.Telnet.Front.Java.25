@@ -1,7 +1,7 @@
 import commons.CommonRails;
-import commons.InternationalCommonRails;
-import commons.IranianWedding;
 import server.nitro.NitroWebExpress;
+
+import java.util.Objects;
 
 /**
  * @author Max Rupplin
@@ -32,43 +32,53 @@ public class Main
 
     protected static final String BITCOIN_WEBEXPRESS_HOST = "localhost";
 
+    protected static final Boolean WEBEXPRESS_TELNET_PROXY_ENABLED = Boolean.TRUE;
+
+    protected static final Boolean COMPONENT_TELNET_PROXY_ENABLED = Boolean.TRUE;
+
     public Main()
     {
-        System.out.println("-");
+        System.out.println("[ Java National Finance Engine v.28.1.1 Software Processes Starting ]");
 
-            System.out.println("[ Java National Finance Engine v.28.1.1 Software Processes Starting ]");
+        System.out.println(". Cryptography/Cryptology AES2 National Cryptolograph Enabled DSS 5.0 .");
 
-            System.out.println(". Cryptography/Cryptology AES2 National Cryptolograph Enabled DSS 5.0 .");
+        System.out.println(". Bitcoin Lightweight Binary Trader 2.0 Enabled ₿ Running on Bitcoin Open-Source v24.0 or newer .");
 
-            System.out.println(". Bitcoin Lightweight Binary Trader 2.0 Enabled ₿ Running on Bitcoin Open-Source v24.0 or newer .");
+        System.out.println(". Operating within and United to National Authority of US United States and State of California in Coalition of and for North Carolina her betterment .");
 
-            System.out.println(". Operating within and United to National Authority of US United States and State of California in Coalition of and for North Carolina her betterment .");
+        System.out.println(". ND51 North Carolina Labors & Standards A5501 ANationals Standards of Cary, NC 2807 .");
 
-            System.out.println(". ND51 North Carolina Labors & Standards A5501 ANationals Standards of Cary, NC 2807 .\n");
+        System.out.println("");
 
-            InternationalCommonRails.IranianWedding.printSystemComponent(this);
+        CommonRails.printSystemComponent(this, this.hashCode(),". Java™ National Finance Engine v.2811.1 v.11.1 .");
 
-        System.out.println("-");
+        CommonRails.printSystemComponent(this, this.hashCode(),". National NitroExpress™ Web Engine Starting .");
 
-            CommonRails.printSystemComponent(this, this.hashCode(),". Java™ National Finance Engine v.2811.1 v.11.1 .");
+        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME, Main.WEBEXPRESS_TELNET_PROXY_ENABLED);
 
-            CommonRails.printSystemComponent(this, this.hashCode(),". National NitroExpress™ Web Engine Starting .");
+        configure_bridge(nitro);
 
-        NitroWebExpress nitro = new NitroWebExpress(Main.WEBEXPRESS_PORT, Main.WEBEXPRESS_HOSTNAME, Main.WEB_EXPRESS_SERVER_THREADNAME);
+        start_nitro_web_express(nitro);
+    }
 
-            nitro.PORT = 49152;
+    private static void configure_bridge(final NitroWebExpress nitro)
+    {
+        Objects.requireNonNull(nitro, "nitro");
 
-            nitro.HOST = "localhost";
+        Objects.requireNonNull(nitro.bridge, "nitro.bridge");
 
-            nitro.THREAD_NAME = "United States D500 WebExpress";
+        nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
 
-            nitro.TELNET_PROXY_ENABLED = Boolean.TRUE;
+        nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, COMPONENT_TELNET_PROXY_ENABLED);
+    }
 
-            nitro.bridge.AES_COMPONENT = new NitroWebExpress.Aspect.AESCompliant(AES_WEBEXPRESS_HOST, AES2_WEBEXPRESS_SERVER_SOCKET, AES2_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
+    private static void start_nitro_web_express(final NitroWebExpress nitro)
+    {
+        Objects.requireNonNull(nitro, "nitro");
 
-            nitro.bridge.BITCOIN_COMPONENT = new NitroWebExpress.Aspect.BitcoinCompliant(BITCOIN_WEBEXPRESS_HOST, BITCOIN_WEBEXPRESS_SERVER_SOCKET, BITCOIN_WEBEXPRESS_SERVER_THREAD_NAME, Boolean.TRUE);
+        if(nitro.SERVER_SOCKET==null) throw new IllegalStateException("NitroWebExpress server socket was not initialized.");
 
-        NitroWebExpress.SELF.start();
+        nitro.start();
     }
 
     public static void main(String...args)
