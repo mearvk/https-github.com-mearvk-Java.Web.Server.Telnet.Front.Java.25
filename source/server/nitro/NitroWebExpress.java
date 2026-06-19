@@ -46,6 +46,8 @@ public class NitroWebExpress extends WebExpress
 
     public Aspect bridge = new Aspect(this);
 
+    public Aspect BRIDGE = bridge;
+
     public NationalID NATIONALID = new NationalID();
 
     public NitroWebExpress(final Integer PORT, final String HOST, final String THREAD_NAME, final Boolean TELNET_PROXY_ENABLED)
@@ -80,6 +82,29 @@ public class NitroWebExpress extends WebExpress
         public AESCompliant AES_COMPONENT;
 
         public BitcoinCompliant BITCOIN_COMPONENT;
+
+        public static final ModuleRegistryImpl ModuleRegistry = new ModuleRegistryImpl();
+
+        public static class InstalledModule
+        {
+            public String name;
+            public Object path;
+            public Object loader;
+            public Object SOURCE;
+            public InstalledModule(String name, Object path, Object loader)
+            {
+                this.name = name; this.path = path; this.loader = loader; this.SOURCE = path;
+            }
+        }
+
+        public static class ModuleRegistryImpl
+        {
+            private final java.util.concurrent.ConcurrentHashMap<String, InstalledModule> modules = new java.util.concurrent.ConcurrentHashMap<>();
+            public void register(InstalledModule m) { modules.put(m.name, m); }
+            public boolean unload(String name) { return modules.remove(name) != null; }
+            public java.util.concurrent.ConcurrentHashMap<String, InstalledModule> all() { return modules; }
+            public InstalledModule get(String name) { return modules.get(name); }
+        }
 
 
         public Aspect(WebExpress WEBEXPRESS)

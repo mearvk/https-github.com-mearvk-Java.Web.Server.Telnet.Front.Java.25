@@ -59,4 +59,9 @@ public class ExceptionHandler
             INSTANCE.dispatcher.dispatch(new RuntimeException(t));
         }
     }
+
+    public static void dispatchShutdown(Exception e)
+    {
+        dispatch(e);
+    }
 }

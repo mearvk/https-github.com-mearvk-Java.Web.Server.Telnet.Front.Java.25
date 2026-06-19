@@ -582,7 +582,7 @@ public class N21Store
     // ---------------------------------------------------------------------
 
     public static void createWhiteAuditorTables() {
-        try (Connection c = getConnection()) {
+        try (java.sql.Connection c = getConnection()) {
 
             ((java.sql.Connection) c).createStatement().execute("""
                 CREATE TABLE IF NOT EXISTS wat_tasks (
@@ -606,7 +606,7 @@ public class N21Store
 
     public static void storeAssignedFile(long fromId, long toId, String filename, String base64) throws Exception
     {
-        try (Connection c = getConnection();
+        try (java.sql.Connection c = getConnection();
              PreparedStatement ps = ((java.sql.Connection) c).prepareStatement("""
                  INSERT INTO wat_tasks (from_national_id, to_national_id, type, filename, payload)
                  VALUES (?, ?, 'file', ?, ?)
@@ -626,7 +626,7 @@ public class N21Store
     // ---------------------------------------------------------------------
 
     public static void storeAssignedBits(long fromId, long toId, int size, String base64) {
-        try (Connection c = getConnection();
+        try (java.sql.Connection c = getConnection();
              PreparedStatement ps = ((java.sql.Connection) c).prepareStatement(
                      """
                      INSERT INTO wat_tasks (from_national_id, to_national_id, type, size, payload)
@@ -653,7 +653,7 @@ public class N21Store
     // ---------------------------------------------------------------------
 
     public static void storeAssignedSignatory(long fromId, long toId, String symbol) {
-        try (Connection c = getConnection();
+        try (java.sql.Connection c = getConnection();
              PreparedStatement ps = ((java.sql.Connection) c).prepareStatement("""
                  INSERT INTO wat_tasks (from_national_id, to_national_id, type, payload)
                  VALUES (?, ?, 'signatory', ?)
@@ -673,7 +673,7 @@ public class N21Store
 
     public static ResultSet loadTasksFor(long toId) {
         try {
-            Connection c = getConnection();
+            java.sql.Connection c = getConnection();
             PreparedStatement ps = ((java.sql.Connection) c).prepareStatement("""
                 SELECT id, type, from_national_id, created_at
                 FROM wat_tasks
@@ -692,7 +692,7 @@ public class N21Store
 
     public static ResultSet loadTask(long taskId) {
         try {
-            Connection c = getConnection();
+            java.sql.Connection c = getConnection();
             PreparedStatement ps = ((java.sql.Connection) c).prepareStatement("""
                 SELECT *
                 FROM wat_tasks
@@ -709,7 +709,7 @@ public class N21Store
     // ---------------------------------------------------------------------
 
     public static void deleteTask(long taskId) {
-        try (Connection c = getConnection();
+        try (java.sql.Connection c = getConnection();
              PreparedStatement ps = ((java.sql.Connection) c).prepareStatement("""
                  DELETE FROM wat_tasks WHERE id = ?
              """)) {
@@ -721,7 +721,7 @@ public class N21Store
     }
 
 
-    public static Connection getConnection() throws Exception
+    public static java.sql.Connection getConnection() throws Exception
     {
         String url  = "jdbc:mysql://localhost:3306/n21db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8";
         String user = "root";        // change if needed
@@ -729,7 +729,7 @@ public class N21Store
 
         Class.forName("com.mysql.cj.jdbc.Driver");
 
-        return (Connection) DriverManager.getConnection(url, user, pass);
+        return DriverManager.getConnection(url, user, pass);
     }
 
     public static void storeChatMessage(final long FROM, final long TO, final String MESSAGE, final String TYPE)

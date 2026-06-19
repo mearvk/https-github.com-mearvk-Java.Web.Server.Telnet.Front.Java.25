@@ -6,7 +6,7 @@ import commons.printing.StartsCanonical;
 import encryption.module.dsa.EncryptionModuleDSA;
 import messaging.MessageQueue;
 import messaging.MessageQueueSorter;
-import server.webexpress.WebExpress;
+import server.nitro.WebExpress;
 
 import java.net.Socket;
 

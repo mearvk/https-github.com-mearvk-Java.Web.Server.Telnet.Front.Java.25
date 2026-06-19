@@ -54,6 +54,16 @@ public class CommonRails
         return list.size();
     }
 
+    public static void printSystemComponent(Object object, Integer hashcode, String line, String color)
+    {
+        printSystemComponent(object, hashcode, line);
+    }
+
+    public static void printShutdownSignal(Object owner, int port, String signal)
+    {
+        printSystemComponent(owner, owner.hashCode(), ". [shutdown] " + signal + " port " + port + " .");
+    }
+
     public static void printSystemComponent(Object object, Integer hashcode, String line)
     {
         String classname = "[Current: "+object.getClass().getSimpleName()+"]";

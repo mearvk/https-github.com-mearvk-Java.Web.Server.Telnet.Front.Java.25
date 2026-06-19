@@ -43,6 +43,18 @@ public class Connection
 
     public Boolean IS_TELNET_EXCELSIOR_CONNECTED = Boolean.FALSE;
 
+    public String btcWallet;
+
+    public int btcVersion;
+
+    public String httpMethod;
+
+    public String protocol;
+
+    public telnet.TelnetLineEditor lineEditor;
+
+    public Object SERVER;
+
     public Connection()
     {
         this.inception_date = new Date();
@@ -53,5 +65,10 @@ public class Connection
         if(server==null) throw new commons.security.BodiSecurityException("//bodi/connect", Thread.currentThread().getStackTrace()[2]);
 
         this.server = server;
+    }
+
+    public Connection(Object owner)
+    {
+        if(owner instanceof BaseServer bs) this.server = bs;
     }
 }

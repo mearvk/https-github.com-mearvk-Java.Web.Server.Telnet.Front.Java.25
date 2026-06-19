@@ -29,6 +29,10 @@ public abstract class BaseServer extends Thread
 
     public CurrentConnections current_connections = new CurrentConnections();
 
+    public CurrentConnections CURRENT_CONNECTIONS = current_connections;
+
+    public BaseServer SUPERCLASS;
+
     private final RecordedConnections recorded_connections = new RecordedConnections();
 
     private final InternationalConnections international_connections = new InternationalConnections();

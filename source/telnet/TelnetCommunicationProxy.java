@@ -14,6 +14,8 @@ public class TelnetCommunicationProxy
 {
     protected WebExpress web_express;
 
+    public WebExpress WEB_EXPRESS;
+
     protected ProcessBuilder process_builder = new ProcessBuilder();
 
     public Process process;
@@ -35,6 +37,8 @@ public class TelnetCommunicationProxy
         CommonRails.printSystemComponent(this, this.hashCode(),". WebExpress Telnet Communicator starts .");
 
         this.web_express = web_express;
+
+        this.WEB_EXPRESS = web_express;
 
         this.process_builder = this.web_express.TELNET_INSTALLER.process_builder;
 
