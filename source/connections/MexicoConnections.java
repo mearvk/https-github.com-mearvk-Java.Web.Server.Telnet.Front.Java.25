@@ -31,7 +31,7 @@ public class MexicoConnections
 
         public Date inception_date;
 
-        public Socket SOCKET;
+        public Socket socket;
 
         public String remote_address;
 
@@ -47,13 +47,13 @@ public class MexicoConnections
         }
     }
 
-    public synchronized void add(final Connection CONNECTION)
+    public synchronized void add(final Connection connection)
     {
-        Connection x = CONNECTION;
+        Connection x = connection;
 
         RecordedMexicoConnection record = new RecordedMexicoConnection();
 
-        record.SOCKET = x.SOCKET;
+        record.socket = x.SOCKET;
 
         record.connection_date = x.inception_date;
 
@@ -73,11 +73,11 @@ public class MexicoConnections
         this.recorded_mexico_connections.add(record);
     }
 
-    public synchronized void remove(final Socket SOCKET)
+    public synchronized void remove(final Socket socket)
     {
         for(int i=0; i<this.recorded_mexico_connections.size(); i++)
         {
-            if(this.recorded_mexico_connections.get(i).SOCKET==SOCKET)
+            if(this.recorded_mexico_connections.get(i).socket==socket)
             {
                 RecordedMexicoConnection connection = this.recorded_mexico_connections.get(i);
 
@@ -86,9 +86,9 @@ public class MexicoConnections
         }
     }
 
-    public synchronized void remove(final RecordedMexicoConnection CONNECTION)
+    public synchronized void remove(final RecordedMexicoConnection connection)
     {
-        this.recorded_mexico_connections.remove(CONNECTION);
+        this.recorded_mexico_connections.remove(connection);
     }
 
     public synchronized Integer size()

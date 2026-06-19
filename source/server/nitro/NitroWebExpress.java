@@ -2,7 +2,7 @@ package server.nitro;
 
 import bitcoin.module.TraderModule;
 import commons.CommonRails;
-import commons.EnglishArithemeter;
+import commons.transition.english.EnglishArithemeter;
 import connections.CurrentConnections;
 import encryption.module.aes.two.EncryptionModule;
 import messaging.MessageQueue;
@@ -48,10 +48,10 @@ public class NitroWebExpress extends WebExpress
 
     public NationalID NATIONALID = new NationalID();
 
-    public NitroWebExpress(final Integer PORT, final String HOST, final String THREAD_NAME)
+    public NitroWebExpress(final Integer PORT, final String HOST, final String THREAD_NAME, final Boolean TELNET_PROXY_ENABLED)
     {
         // Initialize BaseServer/WebExpress so SERVER_SOCKET is created and run() will not NPE
-        super(HOST, PORT, THREAD_NAME, Boolean.TRUE);
+        super(HOST, PORT, THREAD_NAME, TELNET_PROXY_ENABLED);
 
         CommonRails.printSystemComponent(this, 8, ". National ID initialized: "+this.NATIONALID.EIGHT_DIGITS+" .");
 
