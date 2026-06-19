@@ -4,8 +4,7 @@ import messaging.MessageQueue;
 import messaging.MessageQueueSorter;
 import commons.CommonRails;
 import commons.formatting.LineFormatter;
-import commons.printing.StartsCanonical;
-import server.nitro.WebExpress;
+import server.webexpress.WebExpress;
 
 public class RSACompliant extends WebExpress {
 

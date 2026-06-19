@@ -14,6 +14,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/jars/mysql/mysql-connector-j-9.7.0.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.lanterna</groupId>
+            <artifactId>lanterna</artifactId>
+            <version>3.1.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/lanterna-3.1.5.jar</systemPath>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

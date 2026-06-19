@@ -2,11 +2,10 @@ package server.nitro.modules;
 
 import commons.CommonRails;
 import commons.formatting.LineFormatter;
-import commons.printing.StartsCanonical;
 import encryption.module.dsa.EncryptionModuleDSA;
 import messaging.MessageQueue;
 import messaging.MessageQueueSorter;
-import server.nitro.WebExpress;
+import server.webexpress.WebExpress;
 
 import java.net.Socket;
 

@@ -2,7 +2,7 @@ package telnet;
 
 import commons.CommonRails;
 import exceptions.ExceptionHandler;
-import server.nitro.WebExpress;
+import server.webexpress.WebExpress;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
